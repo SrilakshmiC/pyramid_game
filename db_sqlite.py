@@ -34,13 +34,13 @@ class DB:
 
     def get_game_by_id(self, game_id):
         cursor = self.connection.cursor()
-        cursor.execute('SELECT players, goal, state, ts, turns FROM game WHERE rowid = ?', [game_id])
+        cursor.execute('SELECT players, state, ts, turns FROM game WHERE rowid = ?', [game_id])
         return cursor.fetchone()
 
     def get_games_by_user(self, username):
         cursor = self.connection.cursor()
         cursor.execute(
-            'SELECT game.rowid, players, goal, state, ts, turns '
+            'SELECT game.rowid, players, state, ts, turns '
             'FROM game, player '
             'WHERE player.game_id = game.rowid AND playing AND user_name = ? '
             'ORDER BY 1', [username]
@@ -50,7 +50,7 @@ class DB:
     def get_registering_games_by_user(self, username):
         cursor = self.connection.cursor()
         cursor.execute(
-            'SELECT game_id, players, goal, ts, turns FROM game, ('
+            'SELECT game_id, players, ts, turns FROM game, ('
             ' SELECT rowid game_id FROM game WHERE state = 0 AND rowid NOT IN ('
             '  SELECT game.rowid FROM game, player'
             '  WHERE state = 0 AND game.rowid = player.game_id AND player.user_name = ?'
@@ -61,9 +61,9 @@ class DB:
         )
         return cursor.fetchall()
 
-    def new_game(self, players, goal, username):
+    def new_game(self, players, username):
         cursor = self.connection.cursor()
-        cursor.execute('INSERT INTO game (players, goal) VALUES (?, ?);', [players, goal])
+        cursor.execute('INSERT INTO game (players) VALUES (?, ?);', [players])
         cursor.execute('INSERT INTO player (game_id, user_name) VALUES (last_insert_rowid(), ?)', [username])
         self.connection.commit()
 
@@ -73,7 +73,7 @@ class DB:
             print("Unknown game")
             return
 
-        max_players, goal, state, ts, turns = game
+        max_players, state, ts, turns = game
         if state > 0:
             print("Game full")
             return
@@ -149,7 +149,7 @@ class DB:
         cursor.execute('SELECT name, password FROM user')
         users = cursor.fetchall()
 
-        cursor.execute('SELECT rowid, players, goal, state, ts, turns FROM game')
+        cursor.execute('SELECT rowid, players, state, ts, turns FROM game')
         games = cursor.fetchall()
 
         cursor.execute('SELECT rowid, game_id, user_name, score, playing FROM player')
@@ -168,11 +168,11 @@ class DB:
 
 class Game:
     """Base functionality for game classes."""
-    def __init__(self, game_id, num_players, goal, state, ts, turns, connection):
+    def __init__(self, game_id, num_players, state, ts, turns, connection):
         """Initialize game object with state and load players and scores from database."""
         self.id = game_id
         self.num_players = num_players
-        self.goal = goal
+        #self.goal = goal
         self.state = state  # 0={Registering players}, 1={Game on}, 2={Game over}
         self.ts = ts
         self.turns = json.loads(turns)
