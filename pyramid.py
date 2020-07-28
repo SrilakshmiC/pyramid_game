@@ -1,40 +1,27 @@
 """Skeleton for Pyramid game
-
 The code below is still the same as for Rock-Paper-Scissors.
 Modify to implement the Pyramid game.
 """
 
 from db_sqlite import Game
 
-'''player1_valid = list(range(6))
-player1_used = []
-
-player2_valid = list(range(6))
-player2_used = []
-
-player3_valid = list(range(6))
-player3_used = []'''
 
 class Pyramid(Game):
     def valid_moves(self, username):
         """Return list of pairs with valid moves for this player and how to display them.
-
         For example [('r', 'Rock'), ('p', 'Paper'), ('s', 'Scissors')]
         :param username: The moves valid for this user
         :return: List of pairs
         """
-        valid_nums = list(range(6))
-
-        return valid_nums
+        return [('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')]
 
     def add_player_move(self, username, move):
         """Add a new move by a player to the game.
-
         :param username: Username of player who moves
         :param move: One of the strings 'r', 'p', 's'
         """
         # Discard move if Game not in play (i.e. state != 1), or the move is not r(ock), p(aper) or s(cissors)
-        if self.state != 1 or move not in (range(6)):
+        if self.state != 1 or move not in ('0', '1', '2', '3', '4', '5'):
             return
 
         # Find the index (position) of this player in the list of players in the game.
@@ -54,12 +41,12 @@ class Pyramid(Game):
             last_turn[index] = move
             # Check if turn is complete and if so calculate scores
             if not [None for m in last_turn if m is None]:
-                if last_turn in (['p', 'r'], ['s', 'p'], ['r', 's']):
+                if last_turn in (['5', '4'], ['5', '3'], ['5', '2'], ['5', '1'],['5', '0'], ['4', '3'], ['4', '2'], ['4', '1'], ['4', '0'], ['3', '2'], ['3', '1'], ['3', '0'], ['2', '1'], ['2', '0'], ['1', '0']):
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
                     if self.players[0]['score'] == self.goal:
                         self.set_game_over()
-                elif last_turn in (['r', 'p'], ['p', 's'], ['s', 'r']):
+                elif last_turn in (['4', '5'], ['3', '5'], ['2', '5'], ['1', '5'], ['0', '5'], ['3', '4'], ['2', '4'], ['1', '4'], ['0', '4'], ['2', '3'], ['1', '3'], ['0', '3'], ['1', '2'], ['0', '2'], ['0', '1']):
                     self.players[1]['score'] += 1
                     self.save_score_for_player(1)
                     if self.players[1]['score'] == self.goal:
@@ -68,7 +55,6 @@ class Pyramid(Game):
 
     def decorated_moves(self, username):
         """Return a list of moves with formatting information.
-
         :param username: Player's username
         :return: Formatted list of moves
         """
@@ -82,14 +68,13 @@ class Pyramid(Game):
         else:
             incomplete_last_turn = None
             complete_turns = self.turns
-
-        translate = {'r': 'Rock', 'p': 'Paper', 's': 'Scissors'}
+        translate = {'0': '0', '1': '1', '2': '2', '3':'3', '4':'4', '5':'5'}
         decorated_turns = []
 
         for turn in complete_turns:
-            if turn in (['p', 'r'], ['s', 'p'], ['r', 's']):
+            if turn in (['5', '4'], ['5', '3'], ['5', '2'], ['5', '1'],['5', '0'], ['4', '3'], ['4', '2'], ['4', '1'], ['4', '0'], ['3', '2'], ['3', '1'], ['3', '0'], ['2', '1'], ['2', '0'], ['1', '0']):
                 decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], False)])
-            elif turn in (['r', 'p'], ['p', 's'], ['s', 'r']):
+            elif turn in (['4', '5'], ['3', '5'], ['2', '5'], ['1', '5'], ['0', '5'], ['3', '4'], ['2', '4'], ['1', '4'], ['0', '4'], ['2', '3'], ['1', '3'], ['0', '3'], ['1', '2'], ['0', '2'], ['0', '1']):
                 decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], True)])
             else:
                 decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], False)])
@@ -110,7 +95,6 @@ class Pyramid(Game):
 
     def is_players_turn(self, username):
         """Check if it is player's turn.
-
         :param username: Player's username
         :return: boolean
         """
