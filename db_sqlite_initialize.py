@@ -16,7 +16,6 @@ CREATE TABLE user (
 connection.execute('''
 CREATE TABLE game (
  players INTEGER,
- goal INTEGER,
  state INTEGER DEFAULT 0,
  ts TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
  turns VARCHAR(4096) DEFAULT '[]'
