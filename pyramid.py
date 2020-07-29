@@ -10,7 +10,6 @@ class Pyramid(Game):
 
     movesremaining=[[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')],[('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')], [('0', '0'), ('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5')]]
 
-#    rounds = 0
 
     def valid_moves(self, username):
         """Return list of pairs with valid moves for this player and how to display them.
@@ -34,7 +33,7 @@ class Pyramid(Game):
         # Find the index (position) of this player in the list of players in the game.
         # In the case of RPS games this value will be 0 or 1 since RPS always has 2 players.
         index = self.player_index(username)
-        print("Index :" + str(index))
+        #print("Index :" + str(index))
         
         for i in range(len(self.movesremaining[index])):
             #print("Length:"+ str(len(self.movesremaining[index])))
@@ -42,8 +41,6 @@ class Pyramid(Game):
                 #print("Removing:"+ str(i))
                 self.movesremaining[index].remove(self.movesremaining[index][i])
                 break
-#        self.rounds += 1
-#        print(self.rounds)
 
         # If there are no game rounds yet, or the last one is complete
         if not self.turns or not [None for m in self.turns[-1] if m is None]:  # No turns or last complete
@@ -61,76 +58,86 @@ class Pyramid(Game):
             print("goal: " + str(self.goal))
 
             if not [None for m in last_turn if m is None]:
+                rows = len(self.movesremaining[0])
+                print("rows: " + str(rows))
                 if last_turn[0] == last_turn[1] and last_turn[0] == last_turn[2]:
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
-                    if self.players[0]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
                     self.players[1]['score'] += 1
                     self.save_score_for_player(1)
-                    if self.players[1]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
                     self.players[2]['score'] += 1
                     self.save_score_for_player(2)
-                    if self.players[2]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
+  
 
                 elif last_turn[0] == last_turn[1] and last_turn[0] > last_turn[2]:
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
-                    if self.players[0]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
                     self.players[1]['score'] += 1
                     self.save_score_for_player(1)
-                    if self.players[1]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
+
 
                 elif last_turn[1] == last_turn[2] and last_turn[1] > last_turn[0]:
                     self.players[1]['score'] += 1
                     self.save_score_for_player(1)
-                    if self.players[1]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
                     self.players[2]['score'] += 1
                     self.save_score_for_player(2)
-                    if self.players[2]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
+
 
                 elif last_turn[0] == last_turn[2] and last_turn[0] > last_turn[1]:
                     self.players[0]['score'] += 1
                     self.save_score_for_player(0)
-                    if self.players[0]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
                     self.players[2]['score'] += 1
                     self.save_score_for_player(2)
-                    if self.players[2]['score'] == self.goal:
+                    if rows == 0:
                         self.set_game_over()
+           
                     
-                            
                 elif last_turn[0]>last_turn[1]:
                     if last_turn[0]>last_turn[2]:
                         self.players[0]['score'] += 2
                         self.save_score_for_player(0)
-                        if self.players[0]['score'] == self.goal:
+                        if rows == 0:
                             self.set_game_over()
+                       
                     else:
                         self.players[2]['score'] += 2
                         self.save_score_for_player(2)
-                        if self.players[2]['score'] == self.goal:
+                        if rows == 0:
                             self.set_game_over()
+                        
 
                 else:
                     if last_turn[1]>last_turn[2]:
                         self.players[1]['score'] += 2
                         self.save_score_for_player(1)
-                        if self.players[1]['score'] == self.goal:
+                        if rows == 0:
                             self.set_game_over()
+                       
                     else:
                         self.players[2]['score'] += 2
                         self.save_score_for_player(2)
-                        if self.players[2]['score'] == self.goal:
+                        if rows == 0:
                             self.set_game_over()
-                
+                        
+            print("goal: " + str(self.goal))
             self.save_game_state()
+            
             
             '''
             if not [None for m in last_turn if m is None]:
@@ -167,10 +174,6 @@ class Pyramid(Game):
 
         #index = self.player_index(username)
 
-        print("last turn: " + str(last_turn))
-        print("complete turns: " + str(complete_turns))
-
-
         for turn in complete_turns:
             if turn[0] == turn[1] == turn[2]:
                 decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], True), (translate[turn[2]], True)])
@@ -178,22 +181,27 @@ class Pyramid(Game):
             elif turn[0] == turn[1] and turn[0] > turn[2]:
                 decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], True), (translate[turn[2]], False)])
 
+
             elif turn[1] == turn[2] and turn[1] > turn[0]:
                 decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], True), (translate[turn[2]], True)])
+
 
             elif turn[0] == turn[2] and turn[0] > turn[1]:
                 decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], False), (translate[turn[2]], True)])
 
-            
+
             elif turn[0]>turn[1]:
                 if turn[0]>turn[2]:
                     decorated_turns.append([(translate[turn[0]], True), (translate[turn[1]], False), (translate[turn[2]], False)])
+
                 else:
-                    decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], False), (translate[turn[2]], True)])    
+                    decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], False), (translate[turn[2]], True)])
+
 
             else:
                 if turn[1]>turn[2]:
                     decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], True), (translate[turn[2]], False)])
+
                 else:
                     decorated_turns.append([(translate[turn[0]], False), (translate[turn[1]], False), (translate[turn[2]], True)])
             
@@ -236,3 +244,4 @@ class Pyramid(Game):
             return True
         if not [None for m in latest_turn if m is None]:  # Latest turn is complete, start new turn
             return True
+
