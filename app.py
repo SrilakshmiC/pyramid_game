@@ -32,14 +32,14 @@ def application(e, start_response):
     # ----- The common start of every page ---------------------------
 
     page = '''<!DOCTYPE html>
-<html><head><title>Game</title>
+<html><head><title>Pyramid game</title>
 <style>
     table { border-collapse: collapse; }
     table, th, td { border: 1px solid silver; padding: 2px; }
 </style>
 </head>
 <body>
-<h1>Pyramid</h1>'''
+<h1>Let's play Pyramid!</h1>'''
 
     # ----- For logging in and registering ---------------------------
 
@@ -99,11 +99,11 @@ def application(e, start_response):
             return [page.encode()]
 
         page += '{} | <a href="{}/logout">Logout</a>'.format(session_user, app_root)
-#       page += ' | <a href="{}">Refresh</a>'.format(app_root)
+        page += ' | <a href="{}">Refresh</a>'.format(app_root)
         page += '<h2>My games</h2>\n'
         page += '<table><tr><th>Game</th><th>Quit</th><th>State</th><th>Players</th></tr>\n'
         games = [
-            Pyramid(i, p, g, st, ts, t, db.connection) for i, p, g, st, ts, t in db.get_games_by_user(session_user)
+            Pyramid(i, p, st, ts, t, db.connection) for i, p, st, ts, t in db.get_games_by_user(session_user)
             ]
         for game in games:
             page += '<tr><td>{}</td><td><a href="{}/quit?id={}">quit</a></td>'.format(
@@ -139,11 +139,11 @@ def application(e, start_response):
         page += '<h2>Games accepting players</h2>\n'
         page += '<table><tr><th>Game</th><th>Join</th><th>State</th><th>Players</th></tr>\n'
         games = [
-            Pyramid(i, p, g, 0, ts, t, db.connection)
-            for i, p, g, ts, t in db.get_registering_games_by_user(session_user)
+            Pyramid(i, p, 0, ts, t, db.connection)
+            for i, p, ts, t in db.get_registering_games_by_user(session_user)
             ]
         for game in games:
-            page += '<tr><td>{}</td><td>{}</td><td><a href="{}/join?id={}">join</a></td>'.format(
+            page += '<tr><td>{}</td><td><a href="{}/join?id={}">join</a></td>'.format(
                 game.id, app_root, game.id
             )
             page += '<td>{} of {} players</td>'.format(len(game.players), game.num_players, game.id)
@@ -231,7 +231,7 @@ def application(e, start_response):
     # ----- Game ------------------------------------------------------------
 
     elif path_info == '/game':
-        if not session:
+        if not session: 
             start_response('200 OK', headers)
             return ['No session'.encode()]
 
@@ -310,7 +310,7 @@ def application(e, start_response):
             return ['No session'.encode()]
 
         start_response('200 OK', headers)
-        p, g, s, ts, t = db.get_game_by_id(params['id'][0])
+        p, s, ts, t = db.get_game_by_id(params['id'][0])
         return ['{}'.format(ts).encode()]
 
     # ----- Dump tables ------------------------------------------------
